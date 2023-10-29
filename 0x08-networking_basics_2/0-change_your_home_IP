@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+# a function that add entries to /etc/hosts file
+add_host_entry() {
+	local ip_address=$1
+	local hostname=$2
+	echo "$ip_address $hostname" | sudo tee -a /etc/hosts
+}
+
+# ensuring script is run as root
+if [ "$EUID" -ne 0 ]; then
+	echo "please run script as root"
+	exit 1
+fi
+
+# Add localhost entry to etc/hosts
+add_host_entry "127.0.0.2" "localhost"
+
+# Add facebook.com entry to /etc/hosts
+add_host_entry "8.8.8.8" "facebook.com"
+
+# Restart networking service to apply changes
+sudo service networking restart
+
+echo "Configuration completed successfully"
