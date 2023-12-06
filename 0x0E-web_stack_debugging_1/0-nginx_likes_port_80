@@ -10,5 +10,6 @@ printf '%s\n' "server {
     listen 80;
     listen [::]:80 default_server;
 
-    service nginx start
-}
+}" > /etc/nginx/sites-available/default
+
+service nginx start
