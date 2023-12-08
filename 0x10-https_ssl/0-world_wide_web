@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Scans a subdomain's record type and
+# informs which IP is pointing to that record
+
+
+domain="$1"                                         
+subdomain="$2"                                      
+
+lookup_host() {
+    host_record=$(
+        dig "$1" | grep -A1 'ANSWER SECTION:' | tail -n 1
+    )
+
+    echo "$host_record" |
+    awk '{print "The subdomain","'"$subdomain"'","is a",$4,"record and points to",$5}'
+}
+
+if [ "$domain" ] && [ "$subdomain" ] ; then         
+    host="$subdomain.$domain"                       
+    lookup_host "$host"
+elif [ "$domain" ] ; then                           
+    def_subdomains=(www lb-01 web-01 web-02)        
+                                                    
+    for subdomain in "${def_subdomains[@]}" ; do
+        host="$subdomain.$domain"
+        lookup_host "$host"
+    done
+fi
