@@ -8,11 +8,11 @@ global
 	group haproxy
 	daemon
 
-	# Default SSL material locations
+
 	ca-base /etc/ssl/certs
 	crt-base /etc/ssl/private
 
-    #defUault ciphers
+	# Default ciphers
 	ssl-default-bind-ciphers ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS
 	ssl-default-bind-options no-sslv3
 
@@ -32,23 +32,24 @@ defaults
 	errorfile 503 /etc/haproxy/errors/503.http
 	errorfile 504 /etc/haproxy/errors/504.http
 
-# The frontend only listens on port 80
-# If it detects a LetsEncrypt request, is uses the LE backend
-# Else it goes to the default backend for the web servers
+
 frontend http
 	bind *:80
 
-	
+
 	bind *:443 ssl crt /etc/ssl/www.amonkeyprogrammer.tech/www.amonkeyprogrammer.tech.pem
 
-	
+	# Redirect if HTTPS is *not* used
+	redirect scheme https code 301 if !{ ssl_fc }
+
+	# Test URI to see if its a letsencrypt request	
 	acl letsencrypt-acl path_beg /.well-known/acme-challenge/
 	use_backend letsencrypt-backend if letsencrypt-acl
 
 	mode http
 	default_backend web-backend
 
-
+# LE Backend
 backend letsencrypt-backend
 	server letsencrypt 127.0.0.1:8888
 
