@@ -37,7 +37,7 @@ frontend http
 	bind *:80
 
 
-	bind *:443 ssl crt /etc/ssl/www.amonkeyprogrammer.tech/www.amonkeyprogrammer.tech.pem
+	bind *:443 ssl crt /etc/ssl/www.quag.tech/www.quag.tech.pem
 
 	# Redirect if HTTPS is *not* used
 	redirect scheme https code 301 if !{ ssl_fc }
