@@ -1,0 +1,1 @@
+Using strace with puppet and automation to fix an internal server error
