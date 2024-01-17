@@ -5,18 +5,24 @@
 import requests
 
 def do_recurse(subreddit, hot_list=[]):
-    url = f"https://www.reddit.com/r/{subreddit}/about.json"
+    url = f"https://www.reddit.com/r/{subreddit}/hot.json"
     headers = {
         "User-Agent": "Linux:0x16.api.advanced:v1.0.0 (by /acceptable/top)"
     }
     params = {
+        "after": after,
+        "count": count,
         "Limit": "20"
     }
     response = requests.get(url, headers=headers, params=params, allow_redirects=False)
-    response_json = response.json()
-    paginated = [response_json]
+    if response.status_code == 404:
+        return None
+    results = response.json().get("data")
+    after = results.get("after")
+    count = results.get("count")
+    for c in results.get("children"):
+        hot_list.append(c.get("data").get("title"))
 
-    while next in response.links:
-        response = requests.get(response.links['next']['url'], headers=headers)
-        paginated.append(response.json())
-    print(paginated)
+    if after is not None:
+        return do_recurse(subreddit, hot_list, count, after)
+    return hot_list
