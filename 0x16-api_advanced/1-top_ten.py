@@ -7,7 +7,7 @@ import requests
 
 def top_ten(subreddit):
     """Working with the pagination function to query the first 10 hot posts"""
-    url = f"https://www.reddit.com/r/{subreddit}/about.json"
+    url = f"https://www.reddit.com/r/{subreddit}/hot.json"
     headers = {
         "User-Agent": "Linux:0x16.api.advanced:v1.0.0 (by /acceptable/top)"
     }
